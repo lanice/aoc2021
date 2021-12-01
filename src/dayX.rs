@@ -17,23 +17,23 @@ fn part2(input: &[i32]) -> i32 {
 pub mod tests {
     use super::{generator_input, part1, part2};
 
-    static INPUT_RAW: &str = r#""#;
+    static INPUT: &str = r#""#;
 
     #[test]
     fn generator() {
-        let input = generator_input(INPUT_RAW);
+        let input = generator_input(INPUT);
         assert_eq!(input, vec![]);
     }
 
     #[test]
     fn dayX_part1() {
-        let input = generator_input(INPUT_RAW);
+        let input = generator_input(INPUT);
         assert_eq!(part1(&input), 0);
     }
 
     #[test]
     fn dayX_part2() {
-        let input = generator_input(INPUT_RAW);
+        let input = generator_input(INPUT);
         assert_eq!(part2(&input), 0);
     }
 }
