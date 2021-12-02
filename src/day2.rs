@@ -1,3 +1,23 @@
+#[aoc_generator(day2)]
+fn generator_input(input: &str) -> Vec<Instruction> {
+    input
+        .lines()
+        .map(|instr| Instruction::new(instr))
+        .collect::<Vec<_>>()
+}
+
+#[aoc(day2, part1)]
+fn part1(input: &[Instruction]) -> i32 {
+    let position = follow_commands(input);
+    position.horizontal * position.aim
+}
+
+#[aoc(day2, part2)]
+fn part2(input: &[Instruction]) -> i32 {
+    let position = follow_commands(input);
+    position.horizontal * position.depth
+}
+
 #[derive(Debug, Clone, PartialEq)]
 enum Direction {
     FORWARD,
@@ -6,12 +26,12 @@ enum Direction {
 }
 
 impl Direction {
-    pub fn new(instr: &str) -> Direction {
-        match instr {
+    pub fn new(direction: &str) -> Direction {
+        match direction {
             "forward" => Direction::FORWARD,
             "down" => Direction::DOWN,
             "up" => Direction::UP,
-            _ => panic!("Invalid instruction."),
+            _ => panic!("Invalid direction."),
         }
     }
 }
@@ -21,51 +41,38 @@ struct Instruction {
     value: i32,
 }
 
-fn parse_instruction(line: &str) -> Instruction {
-    let split = line.split_whitespace().collect::<Vec<_>>();
-    let direction = Direction::new(split[0]);
-    let value = split[1].parse::<i32>().unwrap();
-    Instruction { direction, value }
-}
-
-#[aoc_generator(day2)]
-fn generator_input(input: &str) -> Vec<Instruction> {
-    input
-        .lines()
-        .map(|l| parse_instruction(l))
-        .collect::<Vec<_>>()
-}
-
-#[aoc(day2, part1)]
-fn part1(input: &[Instruction]) -> i32 {
-    let mut horizontal = 0;
-    let mut depth = 0;
-    for instruction in input {
-        match instruction.direction {
-            Direction::FORWARD => horizontal += instruction.value,
-            Direction::DOWN => depth += instruction.value,
-            Direction::UP => depth -= instruction.value,
-        }
+impl Instruction {
+    pub fn new(instr: &str) -> Instruction {
+        let split = instr.split_whitespace().collect::<Vec<_>>();
+        let direction = Direction::new(split[0]);
+        let value = split[1].parse::<i32>().unwrap();
+        Instruction { direction, value }
     }
-    horizontal * depth
 }
 
-#[aoc(day2, part2)]
-fn part2(input: &[Instruction]) -> i32 {
-    let mut horizontal = 0;
-    let mut depth = 0;
-    let mut aim = 0;
+struct Position {
+    horizontal: i32,
+    depth: i32,
+    aim: i32,
+}
+
+fn follow_commands(input: &[Instruction]) -> Position {
+    let mut position = Position {
+        horizontal: 0,
+        depth: 0,
+        aim: 0,
+    };
     for instruction in input {
         match instruction.direction {
             Direction::FORWARD => {
-                horizontal += instruction.value;
-                depth += aim * instruction.value;
+                position.horizontal += instruction.value;
+                position.depth += position.aim * instruction.value;
             }
-            Direction::DOWN => aim += instruction.value,
-            Direction::UP => aim -= instruction.value,
+            Direction::DOWN => position.aim += instruction.value,
+            Direction::UP => position.aim -= instruction.value,
         }
     }
-    horizontal * depth
+    position
 }
 
 #[cfg(test)]
