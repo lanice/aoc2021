@@ -1,50 +1,24 @@
 use itertools::Itertools;
 
 #[aoc_generator(day2)]
-fn generator_input(input: &str) -> Vec<Instruction> {
+fn generator_input(input: &str) -> Vec<(String, i32)> {
     input
         .split_whitespace()
         .tuples()
-        .map(|(d, v)| Instruction {
-            direction: Direction::new(d),
-            value: v.parse().unwrap(),
-        })
+        .map(|(d, v)| (d.to_string(), v.parse().unwrap()))
         .collect::<Vec<_>>()
 }
 
 #[aoc(day2, part1)]
-fn part1(input: &[Instruction]) -> i32 {
+fn part1(input: &[(String, i32)]) -> i32 {
     let position = follow_commands(input);
     position.horizontal * position.aim
 }
 
 #[aoc(day2, part2)]
-fn part2(input: &[Instruction]) -> i32 {
+fn part2(input: &[(String, i32)]) -> i32 {
     let position = follow_commands(input);
     position.horizontal * position.depth
-}
-
-#[derive(Debug, Clone, PartialEq)]
-enum Direction {
-    FORWARD,
-    DOWN,
-    UP,
-}
-
-impl Direction {
-    pub fn new(direction: &str) -> Direction {
-        match direction {
-            "forward" => Direction::FORWARD,
-            "down" => Direction::DOWN,
-            "up" => Direction::UP,
-            _ => unreachable!(),
-        }
-    }
-}
-
-struct Instruction {
-    direction: Direction,
-    value: i32,
 }
 
 struct Position {
@@ -53,20 +27,21 @@ struct Position {
     aim: i32,
 }
 
-fn follow_commands(input: &[Instruction]) -> Position {
+fn follow_commands(input: &[(String, i32)]) -> Position {
     let mut position = Position {
         horizontal: 0,
         depth: 0,
         aim: 0,
     };
-    for instruction in input {
-        match instruction.direction {
-            Direction::FORWARD => {
-                position.horizontal += instruction.value;
-                position.depth += position.aim * instruction.value;
+    for (direction, value) in input {
+        match (direction.as_str(), value) {
+            ("forward", value) => {
+                position.horizontal += value;
+                position.depth += position.aim * value;
             }
-            Direction::DOWN => position.aim += instruction.value,
-            Direction::UP => position.aim -= instruction.value,
+            ("down", value) => position.aim += value,
+            ("up", value) => position.aim -= value,
+            _ => unreachable!(),
         }
     }
     position
@@ -74,27 +49,24 @@ fn follow_commands(input: &[Instruction]) -> Position {
 
 #[cfg(test)]
 pub mod tests {
-    use super::{generator_input, part1, part2, Direction};
+    use super::{generator_input, part1, part2};
 
-    static INPUT: &str = r#"forward 5
-down 5
-forward 8
-up 3
-down 8
-forward 2
-"#;
+    static INPUT: &str = "forward 5\ndown 5\nforward 8\nup 3\ndown 8\nforward 2";
 
     #[test]
     fn generator() {
         let input = generator_input(&INPUT);
-        assert_eq!(input[0].direction, Direction::FORWARD);
-        assert_eq!(input[0].value, 5);
-        assert_eq!(input[1].direction, Direction::DOWN);
-        assert_eq!(input[1].value, 5);
-        assert_eq!(input[2].direction, Direction::FORWARD);
-        assert_eq!(input[2].value, 8);
-        assert_eq!(input[5].direction, Direction::FORWARD);
-        assert_eq!(input[5].value, 2);
+        assert_eq!(
+            input,
+            [
+                ("forward".to_string(), 5),
+                ("down".to_string(), 5),
+                ("forward".to_string(), 8),
+                ("up".to_string(), 3),
+                ("down".to_string(), 8),
+                ("forward".to_string(), 2)
+            ]
+        );
     }
 
     #[test]
