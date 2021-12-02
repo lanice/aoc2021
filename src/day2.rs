@@ -31,7 +31,7 @@ impl Direction {
             "forward" => Direction::FORWARD,
             "down" => Direction::DOWN,
             "up" => Direction::UP,
-            _ => panic!("Invalid direction."),
+            _ => unreachable!(),
         }
     }
 }
