@@ -1,8 +1,14 @@
+use itertools::Itertools;
+
 #[aoc_generator(day2)]
 fn generator_input(input: &str) -> Vec<Instruction> {
     input
-        .lines()
-        .map(|instr| Instruction::new(instr))
+        .split_whitespace()
+        .tuples()
+        .map(|(d, v)| Instruction {
+            direction: Direction::new(d),
+            value: v.parse().unwrap(),
+        })
         .collect::<Vec<_>>()
 }
 
@@ -39,15 +45,6 @@ impl Direction {
 struct Instruction {
     direction: Direction,
     value: i32,
-}
-
-impl Instruction {
-    pub fn new(instr: &str) -> Instruction {
-        let split = instr.split_whitespace().collect::<Vec<_>>();
-        let direction = Direction::new(split[0]);
-        let value = split[1].parse::<i32>().unwrap();
-        Instruction { direction, value }
-    }
 }
 
 struct Position {
