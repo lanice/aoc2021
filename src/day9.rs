@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, vec};
 
 use itertools::Itertools;
 
@@ -16,32 +16,14 @@ fn generator_input(input: &str) -> Vec<Vec<i32>> {
 
 #[aoc(day9, part1)]
 fn part1(input: &[Vec<i32>]) -> i32 {
-    let mut lows = vec![];
-
-    for i in 0..input.len() {
-        for j in 0..input[i].len() {
-            if is_low(input, i, j) {
-                lows.push(input[i][j]);
-            }
-        }
-    }
-
-    lows.iter().sum::<i32>() + lows.len() as i32
+    let low_coords = find_low_coords(input);
+    low_coords.iter().map(|&(i, j)| input[i][j]).sum::<i32>() + low_coords.len() as i32
 }
 
 #[aoc(day9, part2)]
 fn part2(input: &[Vec<i32>]) -> i32 {
-    let mut lows_coords = vec![];
-
-    for i in 0..input.len() {
-        for j in 0..input[i].len() {
-            if is_low(input, i, j) {
-                lows_coords.push((i, j));
-            }
-        }
-    }
-
-    let mut lows_sizes = lows_coords
+    let low_coords = find_low_coords(input);
+    let mut basin_sizes = low_coords
         .iter()
         .map(|&(i, j)| {
             1 + flood_neighbors(
@@ -53,10 +35,22 @@ fn part2(input: &[Vec<i32>]) -> i32 {
         })
         .collect_vec();
 
-    lows_sizes.sort();
-    lows_sizes.reverse();
+    basin_sizes.sort();
+    basin_sizes.reverse();
 
-    lows_sizes[0..3].iter().product()
+    basin_sizes[0..3].iter().product()
+}
+
+fn find_low_coords(input: &[Vec<i32>]) -> Vec<(usize, usize)> {
+    let mut low_coords = vec![];
+    for i in 0..input.len() {
+        for j in 0..input[i].len() {
+            if is_low(input, i, j) {
+                low_coords.push((i, j));
+            }
+        }
+    }
+    low_coords
 }
 
 fn is_low(input: &[Vec<i32>], i: usize, j: usize) -> bool {
