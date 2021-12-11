@@ -7,13 +7,13 @@ fn generator_input(input: &str) -> Vec<Vec<u32>> {
 }
 
 #[aoc(day3, part1)]
-fn part1(input: &Vec<Vec<u32>>) -> i32 {
+fn part1(input: &[Vec<u32>]) -> i32 {
     let len = input[0].len();
     let mut sums: Vec<u32> = vec![0; len];
 
-    for i in 0..input.len() {
+    for column in input {
         for j in 0..len {
-            sums[j] += input[i][j];
+            sums[j] += column[j];
         }
     }
 
@@ -31,7 +31,7 @@ fn part1(input: &Vec<Vec<u32>>) -> i32 {
 }
 
 #[aoc(day3, part2)]
-fn part2(input: &Vec<Vec<u32>>) -> i32 {
+fn part2(input: &[Vec<u32>]) -> i32 {
     let oxy = &calc(input, 0);
     let co2 = &calc(input, 1);
     to_decimal(oxy) * to_decimal(co2)
@@ -45,8 +45,8 @@ fn to_decimal(binary: &[u32]) -> i32 {
         .fold(0, |acc, (i, &elem)| acc + elem as i32 * 2_i32.pow(i as u32))
 }
 
-fn calc(report: &Vec<Vec<u32>>, xor_bit: u32) -> Vec<u32> {
-    let mut report = report.clone();
+fn calc(report: &[Vec<u32>], xor_bit: u32) -> Vec<u32> {
+    let mut report = report.to_vec();
 
     for i in 0..report[0].len() {
         let common_bit = most_common_at_position(&report, i) ^ xor_bit;
@@ -58,7 +58,7 @@ fn calc(report: &Vec<Vec<u32>>, xor_bit: u32) -> Vec<u32> {
     unreachable!();
 }
 
-fn most_common_at_position(report: &Vec<Vec<u32>>, i: usize) -> u32 {
+fn most_common_at_position(report: &[Vec<u32>], i: usize) -> u32 {
     (report.iter().filter(|line| line[i] == 1).count() * 2 >= report.len()) as u32
 }
 

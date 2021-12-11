@@ -35,7 +35,7 @@ fn part2(input: &[Vec<i32>]) -> i32 {
         })
         .collect_vec();
 
-    basin_sizes.sort();
+    basin_sizes.sort_unstable();
     basin_sizes.reverse();
 
     basin_sizes[0..3].iter().product()

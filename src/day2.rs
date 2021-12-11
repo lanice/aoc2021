@@ -55,7 +55,7 @@ pub mod tests {
 
     #[test]
     fn generator() {
-        let input = generator_input(&INPUT);
+        let input = generator_input(INPUT);
         assert_eq!(
             input,
             [

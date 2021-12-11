@@ -27,16 +27,16 @@ fn decode(entry: &Entry) -> i32 {
     decode_output(&histogram, &entry.output)
 }
 
-fn build_histogram(signal: &Vec<String>) -> HashMap<char, i32> {
+fn build_histogram(signal: &[String]) -> HashMap<char, i32> {
     signal.iter().fold(HashMap::new(), |acc, digit| {
         digit.chars().fold(acc, |mut acc, ch| {
             *acc.entry(ch).or_insert(0) += 1;
-            return acc;
+            acc
         })
     })
 }
 
-fn decode_output(histogram: &HashMap<char, i32>, output: &Vec<String>) -> i32 {
+fn decode_output(histogram: &HashMap<char, i32>, output: &[String]) -> i32 {
     output
         .iter()
         .map(|n| n.chars().map(|ch| histogram[&ch]).sum())

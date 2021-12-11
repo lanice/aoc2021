@@ -58,7 +58,7 @@ fn part2(input: &[Vec<char>]) -> u64 {
         }
     }
 
-    scores.sort();
+    scores.sort_unstable();
     scores[scores.len() / 2]
 }
 

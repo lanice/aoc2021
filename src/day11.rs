@@ -37,17 +37,17 @@ fn step(input: &mut [Vec<u32>]) -> usize {
     let mut who_flashed: HashSet<(usize, usize)> = HashSet::new();
     let mut new_flashes: VecDeque<(usize, usize)> = VecDeque::new();
 
-    for i in 0..input.len() {
-        for j in 0..input[i].len() {
-            input[i][j] += 1;
-            if input[i][j] > 9 {
+    for (i, row) in input.iter_mut().enumerate() {
+        for (j, octo) in row.iter_mut().enumerate() {
+            *octo += 1;
+            if *octo > 9 {
                 who_flashed.insert((i, j));
                 new_flashes.push_back((i, j));
             }
         }
     }
 
-    while new_flashes.len() > 0 {
+    while !new_flashes.is_empty() {
         let (i, j) = new_flashes.pop_front().unwrap();
         for n_i in i.checked_sub(1).unwrap_or(i)..=i + 1 {
             if n_i >= input.len() {

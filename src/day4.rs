@@ -65,13 +65,13 @@ impl Board {
     fn new(input: &str) -> Board {
         let mut numbers = HashMap::new();
         let rows: Vec<&str> = input.lines().collect();
-        for i in 0..BOARD_SIZE {
-            let row: Vec<i32> = rows[i]
+        for (i, row_raw) in rows.iter().enumerate() {
+            let row: Vec<i32> = row_raw
                 .split_whitespace()
                 .map(|f| f.parse::<i32>().unwrap())
                 .collect();
-            for j in 0..BOARD_SIZE {
-                numbers.insert(row[j], (i, j));
+            for (j, cell) in row.iter().enumerate() {
+                numbers.insert(*cell, (i, j));
             }
         }
 
@@ -84,12 +84,9 @@ impl Board {
     }
 
     fn process_number(&mut self, n: &i32) {
-        match self.numbers.remove(n) {
-            Some((i, j)) => {
-                self.rows_filled[i] += 1;
-                self.columns_filled[j] += 1;
-            }
-            None => {}
+        if let Some((i, j)) = self.numbers.remove(n) {
+            self.rows_filled[i] += 1;
+            self.columns_filled[j] += 1;
         }
         self.has_won = self.rows_filled.contains(&5) || self.columns_filled.contains(&5);
     }

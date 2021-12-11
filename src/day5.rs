@@ -48,7 +48,7 @@ struct Point {
 impl Point {
     fn from_str(str: &str) -> Point {
         let (x, y) = str
-            .split(",")
+            .split(',')
             .map(|s| s.parse::<i32>().unwrap())
             .collect_tuple()
             .unwrap();
@@ -72,12 +72,10 @@ fn traverse_vent(map: &mut Map, (p1, p2): (&Point, &Point)) {
 }
 
 fn get_direction(distance: i32) -> i32 {
-    if distance > 0 {
-        -1
-    } else if distance < 0 {
-        1
-    } else {
-        0
+    match distance.cmp(&0) {
+        std::cmp::Ordering::Less => 1,
+        std::cmp::Ordering::Equal => 0,
+        std::cmp::Ordering::Greater => -1,
     }
 }
 
