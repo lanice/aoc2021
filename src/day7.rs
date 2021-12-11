@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 #[aoc_generator(day7)]
 fn generator_input(input: &str) -> Vec<i32> {
     input
@@ -8,12 +10,8 @@ fn generator_input(input: &str) -> Vec<i32> {
 
 #[aoc(day7, part1)]
 fn part1(input: &[i32]) -> i32 {
-    let &min = input.iter().min().unwrap();
-    let &max = input.iter().max().unwrap();
-
-    (min..=max).fold(i32::MAX, |acc, desired_pos| {
-        acc.min(calculate_fuel_p1(input, desired_pos))
-    })
+    let desired_pos = input.iter().sorted_unstable().nth(input.len() / 2).unwrap();
+    calculate_fuel_p1(input, *desired_pos)
 }
 
 #[aoc(day7, part2)]
