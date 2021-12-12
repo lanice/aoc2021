@@ -15,31 +15,29 @@ fn generator_input(input: &str) -> Vec<(String, String)> {
 }
 
 #[aoc(day12, part1)]
-fn part1(input: &[(String, String)]) -> usize {
+fn part1(input: &[(String, String)]) -> i32 {
     let (connections, big_caves) = parse_caves(input);
-    let paths = visit_next(
+    visit_next(
         "start",
         &connections,
         &big_caves,
         &HashSet::from(["start"]),
         false,
         false,
-    );
-    paths.len()
+    )
 }
 
 #[aoc(day12, part2)]
-fn part2(input: &[(String, String)]) -> usize {
+fn part2(input: &[(String, String)]) -> i32 {
     let (connections, big_caves) = parse_caves(input);
-    let paths = visit_next(
+    visit_next(
         "start",
         &connections,
         &big_caves,
         &HashSet::from(["start"]),
         true,
         false,
-    );
-    paths.len()
+    )
 }
 
 fn parse_caves(input: &[(String, String)]) -> (HashMap<&str, Vec<&str>>, HashSet<&str>) {
@@ -47,13 +45,13 @@ fn parse_caves(input: &[(String, String)]) -> (HashMap<&str, Vec<&str>>, HashSet
     let mut big_caves: HashSet<&str> = HashSet::new();
 
     for (left, right) in input {
-        for (l, r) in vec![(left, right), (right, left)] {
+        for (l, r) in [(left, right), (right, left)] {
             if l != "end" && r != "start" {
-                connections.entry(l).or_insert(vec![]).push(r);
+                connections.entry(l).or_insert_with(Vec::new).push(r);
             }
         }
 
-        for cave in vec![left, right] {
+        for cave in [left, right] {
             if cave.chars().next().unwrap().is_uppercase() {
                 big_caves.insert(cave);
             }
@@ -70,38 +68,34 @@ fn visit_next(
     visited: &HashSet<&str>,
     can_visit_small_cave_twice: bool,
     did_visit_small_cave_twice: bool,
-) -> Vec<Vec<String>> {
+) -> i32 {
     if current_cave == "end" {
-        return vec![vec!["end".to_string()]];
+        return 1;
     }
 
-    let mut paths = vec![];
+    let mut successful_paths = 0;
 
     for cave in &connections[current_cave] {
         let visited_and_small = visited.contains(cave) && !big_caves.contains(cave);
         let can_visit_twice = can_visit_small_cave_twice && !did_visit_small_cave_twice;
-        let can_visit = !visited_and_small || can_visit_twice;
         let did_visit_twice = did_visit_small_cave_twice || can_visit_twice && visited_and_small;
+        let can_visit = !visited_and_small || can_visit_twice;
 
         if can_visit {
             let mut visited = visited.clone();
             visited.insert(cave);
-            paths.extend(visit_next(
+            successful_paths += visit_next(
                 cave,
                 connections,
                 big_caves,
                 &visited,
                 can_visit_small_cave_twice,
                 did_visit_twice,
-            ));
+            );
         }
     }
 
-    paths
-        .iter_mut()
-        .for_each(|path| path.push(current_cave.to_string()));
-
-    paths
+    successful_paths
 }
 
 #[cfg(test)]
