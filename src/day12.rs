@@ -78,7 +78,12 @@ fn visit_next(
     let mut paths = vec![];
 
     for cave in &connections[current_cave] {
-        if !visited.contains(cave) || big_caves.contains(cave) {
+        let visited_and_small = visited.contains(cave) && !big_caves.contains(cave);
+        let can_visit_twice = can_visit_small_cave_twice && !did_visit_small_cave_twice;
+        let can_visit = !visited_and_small || can_visit_twice;
+        let did_visit_twice = did_visit_small_cave_twice || can_visit_twice && visited_and_small;
+
+        if can_visit {
             let mut visited = visited.clone();
             visited.insert(cave);
             paths.extend(visit_next(
@@ -87,18 +92,7 @@ fn visit_next(
                 big_caves,
                 &visited,
                 can_visit_small_cave_twice,
-                did_visit_small_cave_twice,
-            ));
-        } else if can_visit_small_cave_twice && !did_visit_small_cave_twice {
-            let mut visited = visited.clone();
-            visited.insert(cave);
-            paths.extend(visit_next(
-                cave,
-                connections,
-                big_caves,
-                &visited,
-                can_visit_small_cave_twice,
-                true,
+                did_visit_twice,
             ));
         }
     }
@@ -109,10 +103,6 @@ fn visit_next(
 
     paths
 }
-
-// fn can_visit(cave: &str, visited: &HashSet<&str>, big_caves: &HashSet<&str>, did_visit_small_cave_twice: bool) -> bool {
-//     !visited.contains(cave) || big_caves.contains(cave) || !did_visit_small_cave_twice
-// }
 
 #[cfg(test)]
 pub mod tests {
