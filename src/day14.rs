@@ -24,7 +24,7 @@ fn part2((polymer, rules): &(String, HashMap<String, char>)) -> u64 {
     find_formula(polymer, rules, 40)
 }
 
-fn find_formula(polymer: &String, rules: &HashMap<String, char>, steps: i32) -> u64 {
+fn find_formula(polymer: &str, rules: &HashMap<String, char>, steps: i32) -> u64 {
     let mut counts: HashMap<char, u64> = HashMap::new();
     let mut pairs: HashMap<(char, char), u64> = HashMap::new();
 
