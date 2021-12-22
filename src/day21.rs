@@ -50,6 +50,8 @@ fn move_pawn(pos: u64, steps: u64) -> u64 {
     (pos + steps - 1) % 10 + 1
 }
 
+type Memo = HashMap<(u64, u64, u64, u64, Player), (u64, u64)>;
+
 fn game_turn(
     p1_pos: u64,
     p1_score: u64,
@@ -57,7 +59,7 @@ fn game_turn(
     p2_score: u64,
     on_play: Player,
     quantum_rolls: &[u64],
-    memo: &mut HashMap<(u64, u64, u64, u64, Player), (u64, u64)>,
+    memo: &mut Memo,
 ) -> (u64, u64) {
     if p1_score >= 21 {
         return (1, 0);

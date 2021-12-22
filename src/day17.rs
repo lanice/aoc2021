@@ -1,3 +1,5 @@
+use std::cmp::Ordering::{Equal, Greater, Less};
+
 #[aoc_generator(day17)]
 fn generator_input(input: &str) -> Area {
     let (l, r) = input
@@ -55,12 +57,10 @@ fn shoot_probe(area: &Area, (vel_x, vel_y): (i32, i32)) -> Option<i32> {
         max_y = max_y.max(pos.y);
         pos.x += vel.x;
         pos.y += vel.y;
-        vel.x += if vel.x < 0 {
-            1
-        } else if vel.x > 0 {
-            -1
-        } else {
-            0
+        vel.x += match vel.x.cmp(&0) {
+            Less => 1,
+            Equal => 0,
+            Greater => -1,
         };
         vel.y -= 1;
     }
